@@ -1,8 +1,8 @@
 from git import Repo, GitCommandError
-from consts import OCS_CACHE_PATH
+from utils.consts import OCS_CACHE_PATH
 from datetime import date
 import os
-from utils import repo_name_from_url
+from utils.utils import repo_name_from_url
 from shutil import copyfile
 
 
@@ -13,8 +13,7 @@ class ExternRepository:
         self.pull()
 
     def pull(self):
-        pathname, _=  ( self.url.split('/')[-1] ).split('.')
-        self.path = os.path.join(OCS_CACHE_PATH, pathname)
+        self.path = os.path.join(OCS_CACHE_PATH,repo_name_from_url(self.url))
         if os.path.exists( self.path ):
             self.repo = Repo(self.path)
             origin = self.repo.remotes.origin
@@ -45,9 +44,20 @@ class InternRepository:
                 open( os.path.join(self.path, "README.md"), "a" ).close()
             except Exception:
                 assert False
-            self.repo.git.add(update=True)
-            self.repo.index.commit( str(date.today() ))
-            self.repo.remotes.origin.push()
+
+            def firstRun():
+                self.repo.git.add(update=True)
+                self.repo.index.commit( str(date.today() ))
+                self.repo.remotes.origin.push()
+                return True
+            #Git error manager
+            inLoop = True
+            while inLoop:
+                try:
+                    if firstRun():
+                        inLoop = False
+                except GitCommandError as e:
+                    print(e)
         else:
             self.repo = Repo(self.path)
             origin = self.repo.remotes.origin

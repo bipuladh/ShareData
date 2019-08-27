@@ -1,5 +1,5 @@
 import os
-from consts import HOME_DIR_PATH, OCS_DIR_PATH, PULL_SECRET_ADDONS
+from utils.consts import HOME_DIR_PATH, OCS_DIR_PATH, PULL_SECRET_ADDONS
 from shutil import copyfile
 import json
 
@@ -11,8 +11,12 @@ def get_pull_secret():
         assert os.path.exists(os.path.join(HOME_DIR_PATH,"pull-secret.txt"))
         copyfile( os.path.join(HOME_DIR_PATH,"pull-secret.txt"),
             os.path.join(OCS_DIR_PATH,'pull-secret.txt') )
-    
-    return verify_pull_secret()
+    verify_pull_secret()
+    contents=''
+    with open(os.path.join(OCS_DIR_PATH,"pull-secret.txt")) as file:
+        contents = file.readlines()
+    return contents
+
     
 
 def verify_pull_secret():
@@ -25,4 +29,4 @@ def verify_pull_secret():
     with open(path,'w') as file:
         json.dump(data,file)
 
-    return json.dumps(data)
+    json.dumps(data)

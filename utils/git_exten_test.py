@@ -1,6 +1,6 @@
-from gitHelper import ExternRepository
-from consts import OCS_CACHE_PATH
-from filesmgr import loadConfigurations
+from utils.gitHelper import ExternRepository
+from utils.consts import OCS_CACHE_PATH
+from utils.filesmgr import loadConfigurations
 import os
 
 configs = loadConfigurations()
