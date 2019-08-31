@@ -6,7 +6,6 @@ from utils.security import encryptfile
 import json
 
 DATE_PATTERN ="%d.%m.%Y"
-
 '''
 specific cluster naming convention
 <date according to pattern>-<kerberos_id>

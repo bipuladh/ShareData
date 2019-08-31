@@ -1,8 +1,5 @@
-from git import Repo, GitCommandError
-from utils.consts import OCS_CACHE_PATH
-from datetime import date
-import os
-from shutil import copyfile
+from utils.gitHelper import ExternRepository, InternalRepository
+import json
 
 class RepositoryManager:
 
@@ -13,8 +10,32 @@ class RepositoryManager:
     def updateMyRepo(self, filename, data):
         self.myRepo.addFile(filename, data)
 
-    def getMyFile(self, filename, data):
+    def __getExternalFile__(self, data, filename):
         pass
 
-    def getExternalFile(self, filename, data):
-        pass
+    def getExternalRepoStatus(self):
+        statusList = []
+        for repo in self.externalRepos:
+            status = json.loads(repo.getStatus())
+            statusList.append(status)
+        
+        return statusList
+
+def initializeRepoManager(configurations):
+    username = configurations['username']
+    password = configurations['password']
+    watchedRepo = configurations['friends_git_id']
+
+    def createMyRepoObject(username, password):
+        return InternalRepository(username, password)
+
+    def createOtherRepo(username, password, id):
+        return ExternRepository(username, password, id)
+
+    myRepo = createMyRepoObject(username, password)
+    extRepos = []
+    for repo in watchedRepo:
+        extRepo = createOtherRepo(username, password, repo)
+        extRepos.append(extRepo)
+
+    return RepositoryManager(myRepo, extRepos)

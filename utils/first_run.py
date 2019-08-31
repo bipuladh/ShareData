@@ -1,7 +1,7 @@
 import os
-from utils.consts import OCS_DIR_PATH, OCS_CLUSTERS_PATH, OCS_CACHE_PATH, OCS_KUBE_PATH, HOME_DIR_PATH
-from utils.filesmgr import loadConfigurations, createConfiguration 
-from utils.versionHandler import updateInternalRepo
+from utils.consts import OCS_DIR_PATH, KUBE_PATH, HOME_DIR_PATH
+from utils.configurations import DEFAULT_CONFIG, writeConfigurations
+from utils.prompts import getGitInformation, teamGitIdPrompt
 
 def isFirstRun():
     if not os.path.exists(OCS_DIR_PATH):
@@ -9,37 +9,27 @@ def isFirstRun():
     else:
         return False
 
-def performFirstRun(my_repo_url, enc_key, gitId, list_ext_repos=[]):
+def performFirstRun():
     setupDirectories()
     setupKubeconfig()
-    config = loadConfigurations()
-    config['MYKEY']['URL'] = my_repo_url
-    config['ENC_KEY']['KEY'] = enc_key
-    config["GITID"] = gitId
+    username, password = getGitInformation()
+    userList = teamGitIdPrompt()
+    setupConfigurations( username, password, userList)
 
-    for count,repo in enumerate(list_ext_repos):
-        config['EXTKEY0' + str(count)] = {}
-        config['EXTKEY0' + str(count)]['URL'] = repo
-
-    createConfiguration(config)
-    #Create the ocs_data/cluster directory
-    #Setup the repo now
-    updateInternalRepo()
-
+def setupConfigurations(gitUsername, gitPassword, userList):
+    config = DEFAULT_CONFIG
+    config['username'] = gitUsername
+    config['password'] = gitPassword
+    config['friends_git_id'] = userList
+    writeConfigurations(config)
 
 def setupDirectories():
     if not os.path.exists(OCS_DIR_PATH):
         os.mkdir(OCS_DIR_PATH)
-    if not os.path.exists(OCS_CLUSTERS_PATH):
-        os.mkdir(OCS_CLUSTERS_PATH)
-    if not os.path.exists(OCS_CACHE_PATH):
-        os.mkdir(OCS_CACHE_PATH)
-    if not os.path.exists(OCS_KUBE_PATH):
-        os.mkdir(OCS_KUBE_PATH)
+    if not os.path.exists(KUBE_PATH):
+        os.mkdir(KUBE_PATH)
 
 def setupKubeconfig():
-    line = "export KUBECONFIG=" + OCS_KUBE_PATH + "/kubeconfig"
+    line = "export KUBECONFIG=" + KUBE_PATH + "/kubeconfig"
     with open(os.path.join(HOME_DIR_PATH,'.bashrc'),'a') as file:
         file.write(line)
-
-    

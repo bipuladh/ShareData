@@ -1,43 +1,61 @@
 from PyInquirer import prompt
 
-def gitIdPrompt():
+
+def getGitInformation():
+    username, password = gitPrompt()
+    return username, password
+
+def gitPrompt():
     questions = [
         {
             'type': 'input',
             'name': 'id',
-            'message': 'Enter your github user id: ',
+            'message': 'Enter your github user name: ',
         },
-        ]
-    answer = prompt(questions)
-    return answer['id']
-
-def passwordPrompt():
-    questions = [
         {
-            'type': 'input',
+            'type': 'password',
             'name': 'password',
             'message': 'Enter your team encryption key: ',
         },
         ]
     answer = prompt(questions)
-    return answer['password']
+    return answer['id'], answer['password']
 
-def setupPrompt():
-    pass
 
-def ownRepoPrompt():
-    questions = [
-        {
-            'type': 'input',
-            'name': 'my_repo',
-            'message': 'Please enter your github empty repo link',
-        },
-    ]
-    answer = prompt(questions)
-    return answer['my_repo']
+def teamGitIdPrompt():
+    def askUserToAddGitUsers(msg):
+        question = {
+            'type': 'confirm',
+            'message': 'msg',
+            'name': 'add',
+            'default': False,
+        }
+        ans = prompt(question)
+        return ans
+    
+    def askAddGitUsers():
+        questions = [
+            {
+                'type':'input',
+                'name':'gitId',
+                'message':'Enter your team member\'s git id: '
+            },
+        ]
+        answer = prompt(questions)
+        return answer['gitId']
 
-def teamKeyRepoPrompt():
-    pass
+    confirmFirst = 'Do you want to enter git id of your team member? '
+    confirm = 'Do you want to enter another git id of your team member? '
+
+    userList = []
+
+    if askUserToAddGitUsers(confirmFirst):
+        while True:
+            userList.append(askAddGitUsers())
+            if not askUserToAddGitUsers(confirm):
+                break
+    
+    return userList
 
 def selectClusterPrompt(clusters):
     questions = [
@@ -51,9 +69,9 @@ def selectClusterPrompt(clusters):
     answer = prompt(questions)
 
     def processChoice(choice):
-        for x, val in enumerate(clusters):
+        for _, val in enumerate(clusters):
             if (val == choice):
-                return x
+                return val
         return -1
 
     return processChoice(answer['cluster'])
@@ -92,8 +110,7 @@ def mainMenuPrompt():
     return processOps(answer['operation'])
 
 def createNewClusterPrompt():
-
     pass
 
-def welcomePrompt():
-   print("Cluster manager initial run\n") 
+def welcomeMessage():
+   print("\n\t\tCluster manager initial run\n") 

@@ -2,11 +2,10 @@ import os
 
 HOME_DIR_PATH = os.getenv('HOME') 
 OCS_DIR_PATH = os.path.join(HOME_DIR_PATH, '.ocs_data')
-OCS_CACHE_PATH = os.path.join(OCS_DIR_PATH,'cache')
 OCS_CONFIG_FILE = os.path.join(OCS_DIR_PATH, 'config')
 OCS_INSTALL_PATH = os.path.join(HOME_DIR_PATH, 'ocs-install')
 OCS_CLUSTERS_PATH = os.path.join(OCS_DIR_PATH, 'clusters')
-OCS_KUBE_PATH = os.path.join(OCS_DIR_PATH, 'auth' )
+KUBE_PATH = os.path.join(HOME_DIR_PATH, 'awskube')
 
 REPO_NAME = "cls_sync_data"
 

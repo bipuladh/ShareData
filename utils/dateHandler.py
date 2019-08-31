@@ -1,7 +1,6 @@
 import json
-from datetime import datetime
+from datetime import datetime as dt
 import os
-from utils.versionHandler import getTeamDirs
 
 '''
  key_file_data => {
@@ -16,6 +15,16 @@ DEAD = "DEAD"
 
 DATE_PATTERN = "%Y/%m/%d-%H:%M:%S"
 
+
+def getHoursFromToday(timestamp):
+    date = dt.strptime(timestamp, DATE_PATTERN)
+    diff = dt.today() - date
+    hours = diff.total_seconds() / 3600
+    return hours
+
+def getTimeStamp():
+    return dt.today().strftime(DATE_PATTERN)
+
 '''
 Path is the path to json file containing cluster_state_info
 @returns (usable:bool, hours_left:float)
@@ -27,11 +36,11 @@ def checkKeyCreationDate(path):
             data = json.load(file)
     except Exception:
         assert False
-    creationDate =datetime.strptime(data['CREATION_DATE'],DATE_PATTERN)
+    creationDate =dt.strptime(data['CREATION_DATE'],DATE_PATTERN)
     status = data['STATUS']
 
     if status == RUN:
-        now = datetime.now()
+        now = dt.now()
         seconds = ( now - creationDate).total_seconds()
         hours = (seconds / 60) / 60
         if (hours > 45 ):
@@ -66,3 +75,5 @@ def getUsableExternalClusters(keyRepos=[], fileName='state.json'):
             loadingClusters.append(repoDir)
     return usableClusters, loadingClusters   
 
+def getTeamDirs():
+    return []
