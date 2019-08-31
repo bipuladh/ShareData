@@ -1,90 +1,62 @@
 from git import Repo, GitCommandError
-from utils.consts import OCS_CACHE_PATH
+from utils.consts import REPO_NAME
 from datetime import date
 import os
 from utils.utils import repo_name_from_url
 from shutil import copyfile
+from github import Github
 
 
-class ExternRepository:
 
-    def __init__(self, url):
-        self.url = url
-        self.pull()
+class Repository:
+    def __init__( self, username, password):
+        self.username = username
+        self.gitUser = Github(username, password)
 
-    def pull(self):
-        self.path = os.path.join(OCS_CACHE_PATH,repo_name_from_url(self.url))
-        if os.path.exists( self.path ):
-            self.repo = Repo(self.path)
-            origin = self.repo.remotes.origin
-            origin.pull()
-        else:
-            self.repo = Repo.clone_from(self.url, self.path )
+
+class ExternRepository(Repository):
+
+    def __init__(self, username, password, externalUser):
+        super(username,password)
+        repo_name = externalUser + "/" + REPO_NAME
+        self.repo = self.gitUser.get_repo(repo_name)
+
+    def getStatus(self):
+        status = self.repo.get_contents("status.json")
+        return status.content
     
-    def getPath(self):
-        return self.path
+    def getFile(self, fileName):
+        contents = self.repo.get_contents(fileName)
+        return contents
 
 
-class InternRepository:
+class InternalRepository(Repository):
 
-    def __init__(self,url):
-        self.url = url
-        self.path = os.path.join(OCS_CACHE_PATH,repo_name_from_url(self.url))
-        self.__startRepo__()
+    def __init__(self,username,password):
+        super(username, password)
+        repo_name = username + "/" + REPO_NAME
+        self.repo = self.gitUser.get_repo(repo_name)
 
-    def __startRepo__(self):
-        #First check if
-        if not os.path.exists(self.path):
-            #Only run the first time important
-            os.mkdir(self.path)
-            self.repo = Repo.clone_from(self.url, self.path)
-            #self.repo.create_head('master')
-            #Touch a file
-            try:
-                open( os.path.join(self.path, "README.md"), "a" ).close()
-            except Exception:
-                assert False
-
-            def firstRun():
-                self.repo.git.add(update=True)
-                self.repo.index.commit( str(date.today() ))
-                self.repo.remotes.origin.push()
-                return True
-            #Git error manager
-            inLoop = True
-            while inLoop:
-                try:
-                    if firstRun():
-                        inLoop = False
-                except GitCommandError as e:
-                    print(e)
-        else:
-            self.repo = Repo(self.path)
-            origin = self.repo.remotes.origin
-            self.repo.create_head('master',origin.refs.master)
-            self.repo.heads.master.set_tracking_branch(origin.refs.master)
-            self.repo.heads.master.checkout()
-            origin.fetch()
-            origin.pull()
-
-    def getPath(self):
-        return self.path
-
-    def addFiles(self,path,push=False):
-        copyfile(path, self.path)
-        if push:
-            self.pushRepo()
-
-    def pushRepo(self):
+    def addFile(self, filename, data):
+        doesExist = False
+        filePath = "/{}".format(filename)
         try:
-            origin = self.repo.remotes.origin
-            self.repo.heads.master.set_tracking_branch(origin.refs.master)
-            self.repo.heads.master.checkout()
-            origin.fetch()
-            origin.pull()
-            self.repo.git.add(update=True)
-            self.repo.index.commit( str( date.today() ) )
-            origin.push()
-        except GitCommandError as e:
-            print(e)
-    
+            self.repo.get_contents(filePath)
+            doesExist = True
+        except Exception:
+            pass
+        if doesExist:
+            self.updateFile(filename, data)
+        else:
+            self.createFile(filename, data)
+
+    def updateFile(self, filename, data):
+        filePath = "/{}".format(filename)
+        contents = self.repo.get_contents(filePath)
+        commit_msg = "Updated file {}".format(filename) 
+        self.repo.update_file(contents.path, commit_msg, data, contents.sha)
+
+    def createFile(self, filename, data):
+        filePath = "/{}".format(filename)
+        commit_msg = "Created file {}".format(filename)
+        self.repo.create_file(filePath, commit_msg, data)

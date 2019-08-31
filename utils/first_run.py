@@ -9,9 +9,7 @@ def isFirstRun():
     else:
         return False
 
-#Updates the config replaces default_config
 def performFirstRun(my_repo_url, enc_key, gitId, list_ext_repos=[]):
-    #Setup my repo url
     setupDirectories()
     setupKubeconfig()
     config = loadConfigurations()
@@ -30,6 +28,8 @@ def performFirstRun(my_repo_url, enc_key, gitId, list_ext_repos=[]):
 
 
 def setupDirectories():
+    if not os.path.exists(OCS_DIR_PATH):
+        os.mkdir(OCS_DIR_PATH)
     if not os.path.exists(OCS_CLUSTERS_PATH):
         os.mkdir(OCS_CLUSTERS_PATH)
     if not os.path.exists(OCS_CACHE_PATH):
