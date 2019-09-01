@@ -1,7 +1,7 @@
 import os
 from utils.consts import KUBE_PATH
-from utils.kubeFileHandler import writeKubePass, writeToKube
+from utils.kubeFileHandler import writeKubePass, writeKube
 
 def setupCluster(kubeconfig, kubepass):
-    writeToKube(kubeconfig)
+    writeKube(kubeconfig)
     writeKubePass(kubepass)

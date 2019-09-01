@@ -1,6 +1,5 @@
 from PyInquirer import prompt
 
-
 def getGitInformation():
     username, password = gitPrompt()
     return username, password
@@ -15,7 +14,7 @@ def gitPrompt():
         {
             'type': 'password',
             'name': 'password',
-            'message': 'Enter your team encryption key: ',
+            'message': 'Enter your github password: ',
         },
         ]
     answer = prompt(questions)
@@ -26,12 +25,12 @@ def teamGitIdPrompt():
     def askUserToAddGitUsers(msg):
         question = {
             'type': 'confirm',
-            'message': 'msg',
+            'message': msg,
             'name': 'add',
             'default': False,
         }
         ans = prompt(question)
-        return ans
+        return ans['add']
     
     def askAddGitUsers():
         questions = [
@@ -58,23 +57,25 @@ def teamGitIdPrompt():
     return userList
 
 def selectClusterPrompt(clusters):
+    choices = [ cluster['owner'] for cluster in clusters]
     questions = [
         {
             'type': 'list',
             'name': 'cluster',
             'message': 'Select the cluster from the following list: ',
-            'choices': clusters,
+            'choices': choices,
         }
     ]
     answer = prompt(questions)
 
     def processChoice(choice):
-        for _, val in enumerate(clusters):
+        for x, val in enumerate(choices):
             if (val == choice):
-                return val
+                return x
         return -1
 
-    return processChoice(answer['cluster'])
+    indexSelected = processChoice( answer['cluster'] )
+    return clusters[ indexSelected ]
 
 
 def mainMenuPrompt():

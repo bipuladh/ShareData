@@ -5,6 +5,7 @@ from utils.first_run import isFirstRun, performFirstRun
 from utils.prompts import welcomeMessage, mainMenuPrompt, selectClusterPrompt
 from utils.setupCluster import setupCluster
 from utils.ClusterInquirer import ClusterInquirer
+from utils.dateHandler import getAvailableClusters
 
 '''
 Tell the user that we are gonna setup a config file
@@ -20,7 +21,7 @@ class Manager:
 
 
     def setupCluster(self,selected):
-        pass
+        self.clusterInquirer.setupKube(selected)
 
     def createCluster(self):
         pass
@@ -35,8 +36,9 @@ if __name__ == '__main__':
         choice = mainMenuPrompt()
         if choice == 0:
             clusters = manager.getClustersStatus()
-            selected = selectClusterPrompt( clusters )
-            manager.setupCluster(selected)
+            healthyClusters = getAvailableClusters(clusters)
+            selectedCluster = selectClusterPrompt( healthyClusters )
+            manager.setupCluster(selectedCluster)
         if choice == 1:
             #Create a new cluster
             manager.createCluster()

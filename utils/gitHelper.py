@@ -17,24 +17,26 @@ class Repository:
 class ExternRepository(Repository):
 
     def __init__(self, username, password, externalUser):
-        super(username,password)
+        super(ExternRepository,self).__init__(username, password)
         repo_name = externalUser + "/" + REPO_NAME
         self.repo = self.gitUser.get_repo(repo_name)
 
     def getStatus(self):
         status = self.repo.get_contents("status.json")
-        return status.content
-    
+        return status.decoded_content
+
     def getFile(self, fileName):
         contents = self.repo.get_contents(fileName)
-        return contents
-
+        return contents.decoded_content
+    
+    def getOwner(self):
+        return (self.repo.owner).login
 
 class InternalRepository(Repository):
 
     def __init__(self,username,password):
-        super(username, password)
-        repo_name = username + "/" + REPO_NAME
+        super(InternalRepository,self).__init__(username, password)
+        repo_name = username + "/" + 'badhikar_ocs'
         self.repo = self.gitUser.get_repo(repo_name)
 
     def addFile(self, filename, data):

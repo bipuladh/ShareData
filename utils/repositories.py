@@ -10,8 +10,11 @@ class RepositoryManager:
     def updateMyRepo(self, filename, data):
         self.myRepo.addFile(filename, data)
 
-    def __getExternalFile__(self, data, filename):
-        pass
+    def getExternalFile(self, owner, filename):
+        for repo in self.externalRepos:
+            if repo.getOwner() == owner:
+                return repo.getFile(filename)
+        raise Exception("No owner found")
 
     def getExternalRepoStatus(self):
         statusList = []

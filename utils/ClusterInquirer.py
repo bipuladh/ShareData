@@ -1,6 +1,7 @@
 import os
 from utils.repositories import initializeRepoManager
 from utils.dateHandler import getHoursFromToday
+from utils.kubeFileHandler import writeKube, writeKubePass
 
 class ClusterInquirer:
     def __init__(self, configurations):
@@ -18,5 +19,9 @@ class ClusterInquirer:
             statusList.append(obj)
         return statusList
 
-    def setupKube(self, owner):
-        pass
+    def setupKube(self, status):
+        owner = status['owner']
+        kubeconfig = self.manager.getExternalFile(owner,"kubeconfig")
+        kubeadm = self.manager.getExternalFile(owner,"kubeadmin-password")
+        writeKube(kubeconfig)
+        writeKubePass(kubeadm)

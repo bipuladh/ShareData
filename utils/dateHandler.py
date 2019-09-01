@@ -25,6 +25,17 @@ def getHoursFromToday(timestamp):
 def getTimeStamp():
     return dt.today().strftime(DATE_PATTERN)
 
+def checkClusterHealthy(cluster):
+    if ( not (cluster['status'] == 'DEAD') ) and getHoursFromToday(cluster['creation_date']) < 48:
+        return True
+    else:
+        return False
+
+def getAvailableClusters(clusters):
+    goodClusters = [ cluster for cluster in clusters if checkClusterHealthy(cluster) ]
+    return goodClusters
+
+
 '''
 Path is the path to json file containing cluster_state_info
 @returns (usable:bool, hours_left:float)
