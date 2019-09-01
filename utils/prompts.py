@@ -1,4 +1,5 @@
 from PyInquirer import prompt
+from utils.dateHandler import getHoursFromToday
 
 def getGitInformation():
     username, password = gitPrompt()
@@ -57,7 +58,9 @@ def teamGitIdPrompt():
     return userList
 
 def selectClusterPrompt(clusters):
-    choices = [ cluster['owner'] for cluster in clusters]
+    choices = [ 'Owner = {} || Status = {} || Time-left = {} hours'.format(cluster['owner'], cluster['status'],
+         48 - getHoursFromToday( cluster['creation_date']) ) 
+        for cluster in clusters]
     questions = [
         {
             'type': 'list',
