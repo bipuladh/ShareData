@@ -9,6 +9,9 @@ class RepositoryManager:
 
     def updateMyRepo(self, filename, data):
         self.myRepo.addFile(filename, data)
+    
+    def getMyStatus(self):
+        return self.myRepo.getStatus()
 
     def getExternalFile(self, owner, filename):
         for repo in self.externalRepos:
@@ -28,12 +31,13 @@ def initializeRepoManager(configurations):
     username = configurations['username']
     password = configurations['password']
     watchedRepo = configurations['friends_git_id']
+    team_enc_key = configurations['team_enc_key']
 
     def createMyRepoObject(username, password):
         return InternalRepository(username, password)
 
     def createOtherRepo(username, password, id):
-        return ExternRepository(username, password, id)
+        return ExternRepository(username, password, id, team_enc_key)
 
     myRepo = createMyRepoObject(username, password)
     extRepos = []

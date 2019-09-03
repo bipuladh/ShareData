@@ -3,7 +3,7 @@ import os
 HOME_DIR_PATH = os.getenv('HOME') 
 OCS_DIR_PATH = os.path.join(HOME_DIR_PATH, '.ocs_data')
 OCS_CONFIG_FILE = os.path.join(OCS_DIR_PATH, 'config')
-OCS_INSTALL_PATH = os.path.join(HOME_DIR_PATH, 'ocs-install')
+OCS_INSTALL_PATH = os.path.join(HOME_DIR_PATH, 'openshift-install')
 OCS_CLUSTERS_PATH = os.path.join(OCS_DIR_PATH, 'clusters')
 KUBE_PATH = os.path.join(HOME_DIR_PATH, 'awskube')
 

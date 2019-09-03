@@ -1,10 +1,7 @@
-from git import Repo, GitCommandError
 from utils.consts import REPO_NAME
-from datetime import date
-import os
-from utils.utils import repo_name_from_url
-from shutil import copyfile
 from github import Github
+import json
+from utils.security import decryptByte
 
 
 
@@ -15,11 +12,11 @@ class Repository:
 
 
 class ExternRepository(Repository):
-
-    def __init__(self, username, password, externalUser):
+    def __init__(self, username, password, externalUser, teamEncKey):
         super(ExternRepository,self).__init__(username, password)
         repo_name = externalUser + "/" + REPO_NAME
         self.repo = self.gitUser.get_repo(repo_name)
+        self.teamEncKey = teamEncKey
 
     def getStatus(self):
         status = self.repo.get_contents("status.json")
@@ -27,16 +24,15 @@ class ExternRepository(Repository):
 
     def getFile(self, fileName):
         contents = self.repo.get_contents(fileName)
-        return contents.decoded_content
+        return decryptByte(self.teamEncKey, contents.decoded_content)
     
     def getOwner(self):
         return (self.repo.owner).login
 
 class InternalRepository(Repository):
-
     def __init__(self,username,password):
         super(InternalRepository,self).__init__(username, password)
-        repo_name = username + "/" + 'badhikar_ocs'
+        repo_name = username + "/" + REPO_NAME
         self.repo = self.gitUser.get_repo(repo_name)
 
     def addFile(self, filename, data):
@@ -53,12 +49,22 @@ class InternalRepository(Repository):
             self.createFile(filename, data)
 
     def updateFile(self, filename, data):
-        filePath = "/{}".format(filename)
+        filePath = "{}".format(filename)
         contents = self.repo.get_contents(filePath)
         commit_msg = "Updated file {}".format(filename) 
         self.repo.update_file(contents.path, commit_msg, data, contents.sha)
 
     def createFile(self, filename, data):
-        filePath = "/{}".format(filename)
+        filePath = "{}".format(filename)
         commit_msg = "Created file {}".format(filename)
         self.repo.create_file(filePath, commit_msg, data)
+
+    def getStatus(self):
+        file = {}
+        try:
+            file = self.repo.get_contents("status.json")
+            file = file.decoded_content
+            file = json.loads(file)
+        except Exception:
+            pass
+        return file

@@ -25,3 +25,18 @@ class ClusterInquirer:
         kubeadm = self.manager.getExternalFile(owner,"kubeadmin-password")
         writeKube(kubeconfig)
         writeKubePass(kubeadm)
+    
+    def setupLocalKube(self, path):
+        authDir = os.path.join(path, 'auth')
+        kubeconfig = ''
+        kubeadmin_password = ''
+        with open( os.path.join(authDir, 'kubeconfig'), 'rb') as file:
+            kubeconfig = file.read()
+        with open( os.path.join(authDir, 'kubeadmin-password'), 'rb') as file:
+            kubeadmin_password = file.read()
+        writeKube(kubeconfig)
+        writeKubePass(kubeadmin_password)
+        
+
+    def getManager(self):
+        return self.manager
