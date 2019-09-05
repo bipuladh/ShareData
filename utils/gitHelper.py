@@ -37,7 +37,12 @@ class InternalRepository(Repository):
     def __init__(self,username,password):
         super(InternalRepository,self).__init__(username, password)
         repo_name = username + "/" + REPO_NAME
-        self.repo = self.gitUser.get_repo(repo_name)
+        try:
+            self.repo = self.gitUser.get_repo(repo_name)
+        except Exception:
+            usr = self.gitUser.get_user()
+            usr.create_repo(REPO_NAME)
+            self.repo = self.gitUser.get_repo(repo_name)
 
     def addFile(self, filename, data):
         doesExist = False
