@@ -24,7 +24,11 @@ class ExternRepository(Repository):
 
     def getFile(self, fileName):
         contents = self.repo.get_contents(fileName)
-        return decryptByte(self.teamEncKey, contents.decoded_content)
+        print( type(contents.decoded_content))
+        if not type(contents.decoded_content) == str:
+            return decryptByte(self.teamEncKey, contents.decoded_content.decode())
+        else:
+            return contents.decoded_content
     
     def getOwner(self):
         return (self.repo.owner).login

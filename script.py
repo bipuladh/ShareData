@@ -37,7 +37,7 @@ if __name__ == '__main__':
     showLocalClusters = False
     while True:
         localClusters = manager.LocalClusterHandler.getLocalUsableClusters()
-        if len(localClusters) > 0 :
+        if len(localClusters) > 0:
             showLocalClusters=True
         choice = mainMenuPrompt(showLocalClusters)
         #List available clusters
@@ -45,9 +45,12 @@ if __name__ == '__main__':
             #Get all clusters
             clusters = manager.getClustersStatus()
             healthyClusters = getAvailableClusters(clusters)
-            selectedCluster = selectClusterPrompt( healthyClusters )
-            manager.setupCluster(selectedCluster)
-            print("The selected cluster has been setup")
+            if len(healthyClusters) > 0:
+                selectedCluster = selectClusterPrompt( healthyClusters )
+                manager.setupCluster(selectedCluster)
+                print("The selected cluster has been setup")
+            else:
+                print("\nNo clusters available right now\n")
         # Create new cluster
         if choice == 1:
             manager.createCluster()

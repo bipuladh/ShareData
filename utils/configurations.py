@@ -7,6 +7,7 @@ DEFAULT_CONFIG = {
         "username": "",
         "password": "",
         "friends_git_id":['messi199610'],
+        "team_enc_key":'hijklll'
     }
 
 def writeConfigurations(config):
