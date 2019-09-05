@@ -30,9 +30,9 @@ class ClusterInquirer:
         authDir = os.path.join(path, 'auth')
         kubeconfig = ''
         kubeadmin_password = ''
-        with open( os.path.join(authDir, 'kubeconfig'), 'rb') as file:
+        with open( os.path.join(authDir, 'kubeconfig'), 'r') as file:
             kubeconfig = file.read()
-        with open( os.path.join(authDir, 'kubeadmin-password'), 'rb') as file:
+        with open( os.path.join(authDir, 'kubeadmin-password'), 'r') as file:
             kubeadmin_password = file.read()
         writeKube(kubeconfig)
         writeKubePass(kubeadmin_password)
