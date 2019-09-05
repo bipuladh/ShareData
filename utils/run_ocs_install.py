@@ -126,6 +126,7 @@ class LocalClusterHandler:
         def updateStatus(self,state):
                 status = self.repoManager.getMyStatus()
                 if len(status) == 0:
+                        status['owner'] = self.username
                         status['status']  = 'CREATE'
                         status['creation_date'] = getTimeStamp()
                 else:
