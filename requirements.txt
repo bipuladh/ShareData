@@ -1,6 +1,4 @@
-simple_crypt==4.1.7
 pexpect==4.7.0
+simple_crypt==4.1.7
 PyInquirer==1.0.3
-GitPython==3.0.2
 PyGithub==1.43.8
-simplecrypt==0.1.1
