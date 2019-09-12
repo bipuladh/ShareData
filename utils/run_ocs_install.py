@@ -7,7 +7,7 @@ import json
 from utils.dateHandler import getTimeStamp
 from threading import Thread
 
-DATE_PATTERN ="%d.%m.%Y"
+DATE_PATTERN ="%d.%m.%Y.%M.%H"
 '''
 specific cluster naming convention
 <date according to pattern>-<kerberos_id>
